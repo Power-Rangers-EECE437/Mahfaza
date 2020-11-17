@@ -46,12 +46,14 @@ tokens:[
     timestamps:true
 }
 )
+
 userSchema.pre('save',async function(next){
     const user = this
     if(user.isModified('password'))
         user.password = await bcrypt.hash(user.password,12)
     next()
 })
+
 userSchema.methods.generateAuthToken = async function(){
     const user = this
     const token = jwt.sign({_id:user._id},'signature')
@@ -59,6 +61,7 @@ userSchema.methods.generateAuthToken = async function(){
     await user.save()
     return token
 }
+
 userSchema.statics.findByCredentials = async (email,password)=>{
     const user = await User.findOne({email})
     if(!user)
@@ -68,10 +71,21 @@ userSchema.statics.findByCredentials = async (email,password)=>{
         throw new  Error('Unable to Login');
     return user
 }
+
 userSchema.virtual('accounts',{
     ref:'Account',
     localField:'_id',
     foreignField:'owner'
 })
+
+userSchema.methods.toJSON = function(){
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+    
+    return userObject
+}
 const User = mongoose.model('User',userSchema)
 module.exports = User
