@@ -26,6 +26,7 @@ transactionRouter.get('/transaction/:id',auth,async(req,res)=>{
 
 transactionRouter.put('/transaction/:id',auth,async(req,res)=>{
     const transaction = new Transaction(req.body)
+    
     try{
         await Transaction.findByIdAndUpdate(req.params.id,transaction)
         await transaction.save()
