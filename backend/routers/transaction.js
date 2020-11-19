@@ -26,7 +26,13 @@ transactionRouter.get('/transaction/:id',auth,async(req,res)=>{
 
 transactionRouter.put('/transaction/:id',auth,async(req,res)=>{
     const transaction = new Transaction(req.body)
+    //if we need to update we need to check the user has access to the account
     
+    //get the user the account
+    // const transaction = new Transaction({
+    //     ...req.body,
+    //      owner:req.user._id //this won't work
+    //  })
     try{
         await Transaction.findByIdAndUpdate(req.params.id,transaction)
         await transaction.save()

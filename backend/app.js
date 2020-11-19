@@ -2,6 +2,7 @@ const express = require('express')
 const userRouter = require('./routers/user.js')
 const accountRouter = require('./routers/account.js')
 const transactionRouter = require('./routers/transaction.js')
+const path = require('path');
 require('./db/mongoose')
 const app = express()
 const host = 'localhost'
@@ -12,6 +13,9 @@ app.use(userRouter)
 app.use(accountRouter)
 app.use(transactionRouter)
 
+
+app.use(express.static(path.resolve(__dirname,'..','frontend/build')));
+
 app.get('/', async function(req, res) { //by default refer to login?
     if (req.header('Authorization'))
     {
@@ -20,17 +24,16 @@ app.get('/', async function(req, res) { //by default refer to login?
         const user = await User.findOne({_id:decodedToken._id,'tokens.token':token})
         if(!user)
         { //if user is not logged in redirect to login page
-        res.sendFile(path.join(__dirname + '/login.html'));
+        res.sendFile(path.resolve(__dirname,'..','frontend/signin.js'));
         }
         else
         { //else redirect to dashboard
-            res.sendFile(path.join(__dirname + '/frontend/dashboard.html'));
+            res.sendFile(path.join(__dirname + '../frontend/dashboard.html'));
         }
     }
     else
-    { //else redirect to dashboard
-        console.log(__dirname)
-        res.sendFile(path.join(__dirname + '/frontend/dashboard.html'));
+    { //else redirect to sign in
+    res.sendFile(path.resolve(__dirname,'..','frontend/signin.js'));
     }
 
 });
