@@ -14,15 +14,15 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 //from https://github.com/mui-org/material-ui/tree/master/docs/src/pages/getting-started/templates/sign-in-side
 function Copyright() {
-  return (''
-    // <Typography variant="body2" color="textSecondary" align="center">
-    //   {'Copyright © '}
-    //   <Link color="inherit" href="https://material-ui.com/">
-    //     Your Website
-    //   </Link>{' '}  
-    //   {new Date().getFullYear()}
-    //   {'.'}
-    // </Typography>
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      <Link color="inherit" href="https://material-ui.com/">
+      By clicking Create account, you agree to our
+      Terms and have read and acknowledge our Privacy Statement.
+      </Link>{' '}  
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
   );
 }
 
@@ -59,29 +59,40 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function SignInSide() {  
+export default function SignUpSide() {  
   const classes = useStyles();
+  
+  function validateEmail(email) 
+  {
+      var re = /\S+@\S+\.\S+/;
+      return re.test(email);
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("func yeah!");
     const data = new FormData(event.target);
+    console.log(data.get('First Name'));
+    console.log(data.get('Last Name'));
     console.log(data.get('email'));
-    
-    fetch('/users/signin', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        password: data.get('password'),
-        email: data.get('email')
-      })
-    }).then(response => response.json()).then(data => {
-      //check for errors
-      console.log(data);
-    })
+    console.log(data.get('password'));
 
+    fetch('/users/signup', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          first_name: data.get('First Name'),
+          last_name: data.get('Last Name'),
+          password: data.get('password'),
+          email: data.get('email')
+        })
+      }).then(response => response.json()).then(data => {
+        //check for errors
+        console.log(data);
+      })
   };
   return (
     <Grid container component="main" className={classes.root}>
@@ -93,9 +104,30 @@ export default function SignInSide() {
             {/* <LockOutlinedIcon /> */}
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign Up
           </Typography>
           <form className={classes.form} noValidate method="POST" onSubmit={handleSubmit}>
+          <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="First Name"
+              label="First Name"
+              type="First_Name"
+              id="First_Name"
+              autoFocus
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="Last Name"
+              label="Last Name"
+              type="Last_Name"
+              id="Last_Name"
+            />
             <TextField
               variant="outlined"
               margin="normal"
@@ -105,7 +137,6 @@ export default function SignInSide() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              autoFocus
             />
             <TextField
               variant="outlined"
@@ -129,7 +160,7 @@ export default function SignInSide() {
               color="primary"
               className={classes.submit}
             >
-              Sign In
+              Create Account
             </Button>
             <Grid container>
               {/* <Grid item xs>
@@ -138,8 +169,8 @@ export default function SignInSide() {
                 </Link>
               </Grid> */}
               <Grid item>
-                <Link href="signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="login" variant="body2">
+                  {"Already have an account? Sign In"}
                 </Link>
               </Grid>
             </Grid>

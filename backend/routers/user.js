@@ -5,6 +5,7 @@ const auth = require('../middleware/auth.js')
 
 userRouter.post('/users/signup',async(req,res)=>{
     const user = new User(req.body)
+    console.log("sign");
     try{
         await user.save()
         res.status(200).send(user)
