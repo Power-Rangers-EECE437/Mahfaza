@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
         minlength:12,
         trim:true
     },
-tokens:[
+    tokens:[
     {
         token:{
             type:String,
