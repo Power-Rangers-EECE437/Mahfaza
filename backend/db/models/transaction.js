@@ -10,7 +10,13 @@ const transactionSchema = mongoose.Schema({
     merchant:{
         type:String
     },
-    account:{
+    note:{
+        type:String
+    },
+    date:{
+        type:Date
+    },
+    account:{ //I guess we can get the currency from here?
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'Account'
