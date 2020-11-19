@@ -19,7 +19,7 @@ const accountSchema = mongoose.Schema({
        required:true
    }
 },{timestamps:true})
-accountSchema.virtual('Transaction',{
+accountSchema.virtual('transactions',{
     ref:'Transaction',
     localField:'_id',
     foreignField:'owner'
