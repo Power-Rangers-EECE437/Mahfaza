@@ -2,17 +2,10 @@ const express = require('express')
 const Transaction = require('../db/models/transaction.js')
 const transactionRouter = new express.Router()
 const auth = require('../middleware/auth.js')
-const accountRouter = require('./account.js')
+const transAuth = require('../middleware/transAuth.js')
 
-transactionRouter.post('/transaction/:accountID',auth,async(req,res)=>{
+transactionRouter.post('/transaction/:accountID',auth,transAuth,async(req,res)=>{
     try{
-        await req.user.populate('accounts').execPopulate()
-        let canAdd = false;
-        req.user.accounts.forEach(account=> {
-            if(account._id == req.params.accountID){
-               canAdd = true 
-            }
-        });
         const transaction = new Transaction(
             {
             ...req.body,
@@ -23,6 +16,7 @@ transactionRouter.post('/transaction/:accountID',auth,async(req,res)=>{
         res.status(200).send(transaction)
     }
     catch(e){
+        console.log(e)
         res.status(400).send(e)
     }    
 })
