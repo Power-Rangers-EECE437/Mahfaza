@@ -1,5 +1,4 @@
 const express = require('express')
-const { findById } = require('../db/models/account.js')
 const Account = require('../db/models/account.js')
 const Transaction = require('../db/models/transaction.js')
 const transactionRouter = new express.Router()

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const transactionRouter = require('../../routers/transaction')
 const transactionSchema = mongoose.Schema({
     amount:{
         type:Number,

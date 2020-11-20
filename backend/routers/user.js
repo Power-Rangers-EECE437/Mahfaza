@@ -3,9 +3,8 @@ const User = require('../db/models/user.js')
 const userRouter = new express.Router()
 const auth = require('../middleware/auth.js')
 
-userRouter.post('/users/signup',async(req,res)=>{
+userRouter.post('/signup',async(req,res)=>{
     const user = new User(req.body)
-    console.log("sign");
     try{
         await user.save()
         res.status(200).send(user)
@@ -15,7 +14,7 @@ userRouter.post('/users/signup',async(req,res)=>{
     }
 })
 
-userRouter.post('/users/signin',async(req,res)=>{
+userRouter.post('/signin',async(req,res)=>{
     try {
        const user = await User.findByCredentials(req.body.email,req.body.password) 
        const token = await user.generateAuthToken()
@@ -25,7 +24,7 @@ userRouter.post('/users/signin',async(req,res)=>{
     }
 })
 
-userRouter.get('/user/profile',auth,async(req,res)=>{
+userRouter.get('/user',auth,async(req,res)=>{
     try {
        res.status(200).send(req.user) 
     } catch (error) {
@@ -33,7 +32,7 @@ userRouter.get('/user/profile',auth,async(req,res)=>{
     }
 })
 
-userRouter.post('/users/signout',auth,async(req,res)=>{
+userRouter.post('/signout',auth,async(req,res)=>{
     try {
        req.user.tokens  = req.user.tokens.filter(token=>{
            return token.token != req.token
@@ -46,7 +45,7 @@ userRouter.post('/users/signout',auth,async(req,res)=>{
     }
 })
 
-userRouter.patch('/user/profile',auth,async(req,res)=>{
+userRouter.patch('/user',auth,async(req,res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['first_name','last_name','email']
     const isValidOperation = updates.every((update)=>allowedUpdates.includes(update))
