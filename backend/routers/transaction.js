@@ -1,17 +1,28 @@
 const express = require('express')
+const { findById } = require('../db/models/account.js')
+const Account = require('../db/models/account.js')
 const Transaction = require('../db/models/transaction.js')
 const transactionRouter = new express.Router()
 const auth = require('../middleware/auth.js')
-const transAuth = require('../middleware/transAuth.js')
 
-transactionRouter.post('/transaction/:accountID',auth,transAuth,async(req,res)=>{
+transactionRouter.post('/transaction/:accountID',auth,async(req,res)=>{
     try{
+        const account = await Account.findById({_id:req.params.accountID})
+
+        if(!account)
+            return res.status(404).send()
+        
+        if(account.owner.toString() != req.user._id.toString())
+            throw new Error("Unauthorized.")
+
         const transaction = new Transaction(
             {
             ...req.body,
             account:req.params.accountID
             }
         )
+        account.balance += transaction.amount
+        await account.save()
         await transaction.save()
         res.status(200).send(transaction)
     }
@@ -20,34 +31,79 @@ transactionRouter.post('/transaction/:accountID',auth,transAuth,async(req,res)=>
         res.status(400).send(e)
     }    
 })
+transactionRouter.delete('/transaction/:id',auth,async(req,res)=>{
+    try {
+      const transaction = await Transaction.findById({_id:req.params.id})  
 
-transactionRouter.get('/transaction/:id',auth,async(req,res)=>{
-    const transaction = await Transaction.findById({_id:req.params.id})
-    if(!transaction)
-        res.status(404).send()
-    const account = transaction.populate('account').execPopulate()
-    console.log(account)
-    try{
-        const transaction = await Transaction.findById({_id:req.params.id,authot})
-        res.status(200).send(transaction)
+      if(!transaction)
+        return res.status(404).send()
+
+      const account = await Account.findById({_id:transaction.account}) 
+      if(account.owner.toString() != req.user._id) 
+            throw new Error("Unauthorized.j")
+
+      await Transaction.deleteOne({_id:req.params.id}) 
+      account.balance -= transaction.amount
+      await account.save()
+
+      res.status(200).send(transaction)
+    } catch (error) {
+       res.status(401).send()
     }
-    catch(e){
-        res.status(400).send(e)
+})
+transactionRouter.get('/transactions/:accountID',auth,async(req,res)=>{
+    try {
+        const account = await Account.findById({_id:req.params.accountID})
+
+        if(!account)
+            return res.status(404).send()
+        
+        if(account.owner.toString() != req.user._id.toString())
+            throw new Error("Unauthorized.")
+        
+        await account.populate('transactions').execPopulate()
+        res.status(200).send(account.transactions)
+    } catch (error) {
+       res.status(401).send()
+       console.log(error)
     }
 })
 
-transactionRouter.put('/transaction/:id',auth,async(req,res)=>{
-    const transaction = new Transaction(req.body)
-    //if we need to update we need to check the user has access to the account
-    
-    //get the user the account
-    // const transaction = new Transaction({
-    //     ...req.body,
-    //      owner:req.user._id //this won't work
-    //  })
+transactionRouter.get('/transaction/:id',auth,async(req,res)=>{
     try{
-        await Transaction.findByIdAndUpdate(req.params.id,transaction)
+        const transaction = await Transaction.findById({_id:req.params.id})
+        if(!transaction)
+            res.status(404).send()
+        const account = await Account.findById({_id:transaction.account})
+        if(account.owner.toString()!= req.user._id.toString())
+            res.status(401).send()
+        res.status(200).send(transaction)
+    }
+    catch(e){
+        res.status(400).send()
+    }
+})
+
+transactionRouter.patch('/transaction/:id',auth,async(req,res)=>{
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['amount']
+    const isValidOperation = updates.every((update)=>allowedUpdates.includes(update))
+    if(!isValidOperation)
+            return res.status(400).send({error:"Invalid Updates"})
+    try{
+        const transaction = await Transaction.findById({_id:req.params.id})
+        if(!transaction)
+            res.status(404).send()
+        const account = await Account.findById({_id:transaction.account})
+        
+        if(account.owner.toString()!= req.user._id.toString())
+            res.status(401).send()
+        account.balance -= transaction.amount
+        updates.forEach(update=>transaction[update] = req.body[update])
+        account.balance += transaction.amount
+        
         await transaction.save()
+        await account.save()
         res.status(200).send(transaction)
     }
     catch(e){

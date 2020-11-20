@@ -22,7 +22,7 @@ const accountSchema = mongoose.Schema({
 accountSchema.virtual('transactions',{
     ref:'Transaction',
     localField:'_id',
-    foreignField:'owner'
+    foreignField:'account'
 })
 const Account = mongoose.model('Account',accountSchema)
 module.exports = Account

@@ -2,7 +2,7 @@ const express = require('express')
 const accountRouter = new express.Router()
 const Account = require('../db/models/account.js')
 const auth = require('../middleware/auth.js')
-
+const Transaction = require('../db/models/transaction.js')
 accountRouter.post('/account',auth,async (req,res) => {
    const account = new Account({
        ...req.body,
@@ -22,7 +22,17 @@ accountRouter.delete('/account/:id',auth,async (req,res) => {
        const account = await Account.findOneAndDelete({_id:req.params.id,owner:req.user._id}) 
        if(!account)
             res.status(404).send()
-        res.status(200).send(account)
+       await account.populate('transactions').execPopulate()
+       const transIDS= []
+       account.transactions.forEach(transaction=>{
+           transIDS.push(transaction._id)
+       })
+       await Transaction.deleteMany({
+          _id:{
+              $in:transIDS
+          } 
+       })
+       res.status(200).send(account)
     } catch (error) {
        res.status(401).send()
     }
