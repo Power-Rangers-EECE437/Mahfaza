@@ -1,22 +1,24 @@
-import React from 'react';
+import React , { useState }from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
+// import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 // import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { BrowserRouter, Route, Switch, Link} from 'react-router-dom';
+
 //from https://github.com/mui-org/material-ui/tree/master/docs/src/pages/getting-started/templates/sign-in-side
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      <Link color="inherit" href="https://material-ui.com/">
+      <Link style={linkStyle} color="inherit" href="https://material-ui.com/">
       By clicking Create account, you agree to our
       Terms and have read and acknowledge our Privacy Statement.
       </Link>{' '}  
@@ -26,7 +28,15 @@ function Copyright() {
   );
 }
 
-
+const linkStyle = {
+  color: '#556cd6',
+  textDecoration: 'None',
+  fontSize: '0.875rem',
+  fontFamily: "Roboto",
+  fontWeight: 400,
+  lineHeight: 1.43,
+  letterSpacing: '0.01071em',
+};
 const useStyles = makeStyles((theme) => ({
   root: {
     height: '100vh',
@@ -54,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   submit: {
+    backgroundColor : '#3da9ff',
     margin: theme.spacing(3, 0, 2),
   },
 }));
@@ -61,23 +72,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUpSide() {  
   const classes = useStyles();
-  
-  function validateEmail(email) 
-  {
-      var re = /\S+@\S+\.\S+/;
-      return re.test(email);
-  }
+
+  const [emailError, setemailError] = useState(false)
+  const [passwordError, setpasswordError] = useState(false)
+  const [userExistsError, setuserExistsError] = useState(false)
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("func yeah!");
     const data = new FormData(event.target);
-    console.log(data.get('First Name'));
-    console.log(data.get('Last Name'));
-    console.log(data.get('email'));
-    console.log(data.get('password'));
 
-    fetch('/users/signup', {
+    fetch('/signup', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -92,6 +96,28 @@ export default function SignUpSide() {
       }).then(response => response.json()).then(data => {
         //check for errors
         console.log(data);
+        setemailError(false);
+        setpasswordError(false);
+        setuserExistsError(false);
+        if (data["errors"]){
+        if(data["errors"]["password"]){
+          setpasswordError(true);
+          console.log("Enter a gd pass pls")
+        }
+        if(data["errors"]["email"]){
+          setemailError(true);
+          console.log("Enter a valid email")
+        }
+        }
+        else if (data["code"] == 11000)
+        {
+          setuserExistsError(true);
+        }
+        else{
+        //else no error
+        //login user
+
+        }
       })
   };
   return (
@@ -133,6 +159,8 @@ export default function SignUpSide() {
               margin="normal"
               required
               fullWidth
+              error={emailError? true : userExistsError? true : false}
+              helperText = {emailError? "Please enter a valid email" : userExistsError? "User already exists" : ""}
               id="email"
               label="Email Address"
               name="email"
@@ -143,6 +171,8 @@ export default function SignUpSide() {
               margin="normal"
               required
               fullWidth
+              error={passwordError? true : false}  //this will show err message only when there is error
+              helperText="Password must be 12 characters long"
               name="password"
               label="Password"
               type="password"
@@ -169,7 +199,7 @@ export default function SignUpSide() {
                 </Link>
               </Grid> */}
               <Grid item>
-                <Link href="login" variant="body2">
+                <Link style={linkStyle} to="/login" variant="body2">
                   {"Already have an account? Sign In"}
                 </Link>
               </Grid>

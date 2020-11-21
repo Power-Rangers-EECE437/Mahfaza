@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Link} from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
-import App from './App';
 import theme from './theme';
-import SignInSide from './login';
-import SignUpSide from './signup';
-
+import SignInSide from './pages/login';
+import SignUpSide from './pages/signup';
+import Dashboard from './pages/dashboard/Dashboard';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -15,8 +14,9 @@ ReactDOM.render(
     {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
     <CssBaseline />
     <Switch>
-            <Route path={["/signin","/", "/login"]} component={SignInSide} exact/>
+            <Route path={["/signin", "/", "/login"]} component={SignInSide} exact/>
             <Route path="/signup" component={SignUpSide}/>
+            <Route path="/dashboard" component={Dashboard}/>
             <Route component={Error}/>
            </Switch>
   </ThemeProvider>

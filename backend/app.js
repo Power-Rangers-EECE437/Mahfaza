@@ -24,16 +24,17 @@ app.get('/', async function(req, res) { //by default refer to login?
         const user = await User.findOne({_id:decodedToken._id,'tokens.token':token})
         if(!user)
         { //if user is not logged in redirect to login page
-        res.sendFile(path.resolve(__dirname,'..','frontend/signin.js'));
+            res.sendFile(path.resolve(__dirname,'..','frontend/build','index.html'));
         }
         else
         { //else redirect to dashboard
-            res.sendFile(path.join(__dirname + '../frontend/dashboard.html'));
+            res.sendFile(path.resolve(__dirname,'..','frontend/build','index.html'));
         }
     }
     else
     { //else redirect to sign in
-    res.sendFile(path.resolve(__dirname,'..','frontend/signin.js'));
+        res.redirect("/login");
+        // res.sendFile(path.resolve(__dirname,'..','frontend/build','index.html'));
     }
 
 });
