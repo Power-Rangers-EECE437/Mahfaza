@@ -1,4 +1,4 @@
-import React , { useState }from 'react';
+import React , { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,19 +12,19 @@ import Grid from '@material-ui/core/Grid';
 // import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { BrowserRouter, Route, Switch, Link} from 'react-router-dom';
+import { Link, useHistory} from 'react-router-dom';
 
 //from https://github.com/mui-org/material-ui/tree/master/docs/src/pages/getting-started/templates/sign-in-side
 function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      <Link style={linkStyle} color="inherit" href="https://material-ui.com/">
-      By clicking Create account, you agree to our
-      Terms and have read and acknowledge our Privacy Statement.
-      </Link>{' '}  
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+  return ( ''
+  //   <Typography variant="body2" color="textSecondary" align="center">
+  //     <Link style={linkStyle} color="inherit" href="https://material-ui.com/">
+  //     By clicking Create account, you agree to our
+  //     Terms and have read and acknowledge our Privacy Statement.
+  //     </Link>{' '}  
+  //     {new Date().getFullYear()}
+  //     {'.'}
+  //   </Typography>
   );
 }
 
@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUpSide() {  
   const classes = useStyles();
+  const history = useHistory()
 
   const [emailError, setemailError] = useState(false)
   const [passwordError, setpasswordError] = useState(false)
@@ -116,7 +117,9 @@ export default function SignUpSide() {
         else{
         //else no error
         //login user
-
+        localStorage.setItem('loggedStatus', true);
+        localStorage.setItem('token', data["token"]);
+        history.push('/dashboard');
         }
       })
   };

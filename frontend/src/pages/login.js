@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,7 +12,7 @@ import Grid from '@material-ui/core/Grid';
 // import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { BrowserRouter, Route, Switch, Link} from 'react-router-dom';
+import { useHistory, Link} from 'react-router-dom';
 
 //from https://github.com/mui-org/material-ui/tree/master/docs/src/pages/getting-started/templates/sign-in-side
 function Copyright() {
@@ -73,8 +73,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignInSide() {  
   const classes = useStyles();
+  const history = useHistory()
 
-
+  const [loginError, setloginError] = useState(false)
   
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -95,6 +96,15 @@ export default function SignInSide() {
     }).then(response => response.json()).then(data => {
       //check for errors
       console.log(data);
+      if(data["error"]){
+      localStorage.setItem('loggedStatus', false);
+      setloginError(true);
+      }
+      else{
+      localStorage.setItem('loggedStatus', true);
+      localStorage.setItem('token', data["token"]);
+      history.push('/dashboard');
+      }
     })
 
   };
@@ -116,6 +126,7 @@ export default function SignInSide() {
               margin="normal"
               required
               fullWidth
+              error = {loginError? true : false }
               id="email"
               label="Email Address"
               name="email"
@@ -127,6 +138,8 @@ export default function SignInSide() {
               margin="normal"
               required
               fullWidth
+              error = {loginError? true : false }
+              helperText = {loginError? 'Invalid credentials' : '' }
               name="password"
               label="Password"
               type="password"
