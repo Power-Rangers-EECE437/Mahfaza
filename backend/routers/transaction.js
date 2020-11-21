@@ -23,11 +23,10 @@ transactionRouter.post('/transaction/:accountID',auth,async(req,res)=>{
         account.balance += transaction.amount
         await account.save()
         await transaction.save()
-        res.status(200).send(transaction)
+        res.status(201).send(transaction)
     }
     catch(e){
-        console.log(e)
-        res.status(400).send(e)
+        res.status(500).send(e)
     }    
 })
 transactionRouter.delete('/transaction/:id',auth,async(req,res)=>{

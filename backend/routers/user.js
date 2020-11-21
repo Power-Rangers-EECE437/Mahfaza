@@ -7,7 +7,7 @@ userRouter.post('/signup',async(req,res)=>{
     const user = new User(req.body)
     try{
         await user.save()
-        res.status(200).send(user)
+        res.status(201).send(user)
     }
     catch(e){
         res.status(400).send(e)
@@ -20,7 +20,7 @@ userRouter.post('/signin',async(req,res)=>{
        const token = await user.generateAuthToken()
        res.status(200).send({user,token})
     } catch (e) {
-        res.status(404).send()
+        res.status(401).send(e)
     }
 })
 
@@ -41,7 +41,6 @@ userRouter.post('/signout',auth,async(req,res)=>{
        res.status(200).send()
     } catch (error) {
         res.status(500).send()
-        console.log(error)
     }
 })
 
