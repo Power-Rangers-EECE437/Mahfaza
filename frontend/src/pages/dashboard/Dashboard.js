@@ -22,19 +22,7 @@ import { mainListItems, secondaryListItems } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
-
-// function Copyright() {
-//   return (
-//     <Typography variant="body2" color="textSecondary" align="center">
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://material-ui.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
+import Dialog from './transactionDialog';
 
 const drawerWidth = 240;
 
@@ -114,6 +102,11 @@ const useStyles = makeStyles((theme) => ({
   },
   fixedHeight: {
     height: 240,
+  },
+  dialogButton:{
+    position : 'absolute',
+    bottom : 20,
+    right: 20,
   },
 }));
 
@@ -196,6 +189,9 @@ export default function Dashboard() {
           </Box> */}
         </Container>
       </main>
+      <div className={classes.dialogButton}> 
+      <Dialog/> 
+      </div>
     </div>
   );
 }

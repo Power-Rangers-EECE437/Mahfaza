@@ -49,6 +49,8 @@ transactionRouter.delete('/transaction/:id',auth,async(req,res)=>{
        res.status(401).send()
     }
 })
+
+//get all transactions from specified acount
 transactionRouter.get('/transactions/:accountID',auth,async(req,res)=>{
     try {
         const account = await Account.findById({_id:req.params.accountID})
