@@ -14,13 +14,17 @@ const transactionSchema = mongoose.Schema({
         type:String
     },
     date:{
-        type:Date
+        required:true,
+        type:Date,
+        default: () => { return new Date() }
     },
     account:{ //I guess we can get the currency from here?
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'Account'
     }
+},{
+    timestamps:true
 })
 const Transaction = mongoose.model('Transaction',transactionSchema)
 
