@@ -115,12 +115,29 @@ export default function SignUpSide() {
           setuserExistsError(true);
         }
         else{
-        //else no error
-        //login user
-        localStorage.setItem('loggedStatus', true);
-        localStorage.setItem('token', data["token"]);
-        history.push('/dashboard');
+          // else no error
+          //login user
+          console.log(data)
+          localStorage.setItem('loggedStatus', true);
+          localStorage.setItem('token', data["token"]);
+          return data;
         }
+      }).then(data=>{
+
+         fetch('/account', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            owner: data["user"]["_id"],
+            balance: 0,
+            name: 'default',
+            currency: "lollar"
+          })
+        })
+          history.push('/dashboard');
       })
   };
   return (

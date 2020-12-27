@@ -41,6 +41,8 @@ fetch('/accounts/', {
     'Authorization': userToken,
   },
 }).then(response => response.json()).then(data => {
+  console.log(data)
+  if (data[0]){
   fetch('/transactions/'+data[0]["_id"], {
     method: 'GET',
     headers: {
@@ -54,6 +56,7 @@ fetch('/accounts/', {
     rows.push(data[0]);
     console.log(rows)
   })
+}
 })
 
 

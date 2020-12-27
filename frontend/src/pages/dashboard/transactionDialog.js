@@ -28,6 +28,28 @@ export default function FormDialog() {
     setOpen(false);
   };
 
+  const handleSubmit = (event) => {
+    setOpen(false);
+    event.preventDefault();
+    const data = new FormData(event.target);
+    console.log(data.get("Merchant"));
+    
+    fetch('/transaction/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: data.get('amount'),
+        category: data.get('category'),
+        merchant: data.get('merchant'),
+        note: data.get('note'),
+        date: data.get('date'),
+        accountID: 0
+      })
+    })
+  }
   return (
     <div>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
@@ -39,12 +61,13 @@ export default function FormDialog() {
           <DialogContentText>
             Fill the form below to add a new transaction
           </DialogContentText>
+          <form className={classes.form} noValidate method="POST" onSubmit={handleSubmit}>
           <TextField
             autoFocus
             margin="dense"
             id="name"
             label="Merchant"
-            type="email"
+            name = "merchant"
             fullWidth
           />
           <TextField
@@ -52,7 +75,7 @@ export default function FormDialog() {
             margin="dense"
             id="name"
             label="Category"
-            type="email"
+            name = "category"
             fullWidth
           />
           <TextField
@@ -61,6 +84,7 @@ export default function FormDialog() {
             id="name"
             label="Amount"
             type="number"
+            name="amount"
             fullWidth
           />
           <TextField
@@ -69,7 +93,8 @@ export default function FormDialog() {
             id="name"
             label="Date"
             type="date"
-            placeholder='Date'
+            placeholder=''
+            name="date"
             fullWidth
           />
           {/* https://material-ui.com/components/text-fields/ */}
@@ -81,17 +106,17 @@ export default function FormDialog() {
             id="name"
             label="Note"
             type="text"
+            name="note"
             fullWidth
           />
-        </DialogContent>
-        <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
-            Subscribe
+          <Button type="submit" color="primary">
+            Add Transaction
           </Button>
-        </DialogActions>
+          </form>
+        </DialogContent>
       </Dialog>
     </div>
   );
