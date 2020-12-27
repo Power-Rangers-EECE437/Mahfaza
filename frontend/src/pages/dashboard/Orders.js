@@ -21,16 +21,18 @@ const userToken = localStorage.getItem('token');
 //   rows = fetchAccounts(userToken);
 //   resolve()
 //   });
-function createData(_id, date, name, shipTo, paymentMethod, amount) {
-  return { _id, date, name, shipTo, paymentMethod, amount };
+function createData(_id, date, merchant, category, note , amount) {
+  var date = new Date(date).getMonth() + "/" + new Date(date).getMonth() + "/" + new Date(date).getFullYear()
+
+  return { _id, date, merchant, category, note, amount };
 }
 
 let rows = [
-  createData("0", '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-  createData("1", '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
+  // createData("0", '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
+  // createData("1", '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
   // createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  // createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-  createData("4", '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
+  // createData("3", '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
+  // createData("4", '15 March, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
 ];
 
 fetch('/accounts/', {
@@ -41,6 +43,7 @@ fetch('/accounts/', {
     'Authorization': userToken,
   },
 }).then(response => response.json()).then(data => {
+  console.log("Orders")
   console.log(data)
   if (data[0]){
   fetch('/transactions/'+data[0]["_id"], {
@@ -53,8 +56,17 @@ fetch('/accounts/', {
   }).then(response => response.json()).then(data => {
     //check for errors
     console.log("here");
-    rows.push(data[0]);
-    console.log(rows)
+    let newData = data.map(function(data){
+      var _id = data._id
+      var date = new Date(data.date).getMonth() + "/" + new Date(data.date).getMonth() + "/" + new Date(data.date).getFullYear()
+      var merchant = data.merchant
+      var category = data.category
+      var note = data.note
+      var amount = data.amount
+      return { _id , date , merchant, category ,note  , amount };
+    });
+    rows = rows.concat(newData);
+    console.log(rows);
   })
 }
 })

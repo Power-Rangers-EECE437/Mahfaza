@@ -129,6 +129,7 @@ export default function SignUpSide() {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'Authorization': data["token"]
           },
           body: JSON.stringify({
             owner: data["user"]["_id"],

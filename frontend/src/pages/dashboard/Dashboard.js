@@ -121,6 +121,23 @@ export default function Dashboard() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  console.log("Here");
+
+  fetch('/accounts', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization' : localStorage.getItem('token')
+    }
+  }).then(response => response.json()).then(data => {
+    //check for errors
+    console.log("accounts")
+    console.log(data);
+    localStorage.setItem('accountId',  JSON.stringify(data[0]));
+  })
+
+
   return (
     <div className={classes.root}>
       <CssBaseline />

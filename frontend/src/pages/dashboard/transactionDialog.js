@@ -32,21 +32,20 @@ export default function FormDialog() {
     setOpen(false);
     event.preventDefault();
     const data = new FormData(event.target);
-    console.log(data.get("Merchant"));
-    
-    fetch('/transaction/', {
+    let accountId = JSON.parse(localStorage.getItem('accountId'))
+    fetch('/transaction/'+accountId["_id"], {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token')
       },
       body: JSON.stringify({
         amount: data.get('amount'),
         category: data.get('category'),
         merchant: data.get('merchant'),
         note: data.get('note'),
-        date: data.get('date'),
-        accountID: 0
+        date: data.get('date') ? data.get('date') : Date.now(),
       })
     })
   }

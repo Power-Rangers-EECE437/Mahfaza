@@ -95,7 +95,6 @@ export default function SignInSide() {
       })
     }).then(response => response.json()).then(data => {
       //check for errors
-      console.log(data);
       if(data["error"]){
       localStorage.setItem('loggedStatus', false);
       setloginError(true);
